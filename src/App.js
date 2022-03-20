@@ -1,25 +1,28 @@
+import { useRef, useEffect } from 'react';
 import { useClickKeeper } from './features/clicks/useClickKeeper';
+import { useProducer } from './features/producers/useProducer';
 import ClickCounter from './features/clicks/ClickCounter';
 import Clicker from './features/clicks/Clicker';
-import AutoClicker from './features/clicks/AutoClicker';
+
+const refreshPerSecond = 10;
 
 const App = () => {
  
-    const [clicks, addClicks, setClicksPerClick] = useClickKeeper();
+    const [lastSnapshot, clicks, makeSnapshot] = useClickKeeper();
+    const [producers, addProducer, sumClicks] = useProducer();
+
+    useEffect(() => {
+        const refreshInterval = setInterval(() => {
+            makeSnapshot(sumClicks(lastSnapshot) + clicks);
+        }, 1000 / refreshPerSecond);
+
+        return () => clearInterval(refreshInterval);
+    }, [clicks, lastSnapshot, refreshPerSecond]);
  
     return (
         <div className="d-flex flex-column vw-100 vh-100 bg-dark align-items-center justify-content-center">
+            <Clicker addClicks={() => makeSnapshot(clicks + 1)}/>
             <ClickCounter clicks={clicks}/>
-            <Clicker addClicks={addClicks}/>
-
-            <section className="d-flex flex-row flex-wrap"
-                    style={{width: '16em'}}>
-                {
-                    [...Array(60).keys()].map(index => (
-                        <AutoClicker key={index} offset={index} addClicks={addClicks}/>
-                    ))
-                }
-            </section>
         </div>
     );
 };
