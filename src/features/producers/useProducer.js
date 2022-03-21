@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useCookies } from '../cookies/useCookies';
 
 const priceMultiplier = 0.05;
 
@@ -29,9 +30,12 @@ const sumProducerClicks = (lastSnapshot, clicksPerSecond, count) => {
 
 export const useProducer = () => {
 
+    const [setSaveState, getSaveState] = useCookies('producers');   
+
     const [ producers, setProducers ] = useState([
         createProducer('autoClicker', 'Auto Clicker', 'bi-cursor', 0.5, 100),
-        createProducer('mouse', 'Mouse', 'bi-mouse', 5, 1000)
+        createProducer('mouse', 'Mouse', 'bi-mouse', 5, 1000),
+        createProducer('macro', 'Macro', 'bi-code', 10, 12000)
     ]);
 
     const addProducer = useCallback(name => {
@@ -60,5 +64,17 @@ export const useProducer = () => {
         return runningSum;
     }, [producers, sumProducerClicks]);
 
-    return [ producers, addProducer, sumClicks];
+    const createSaveState = useCallback(() => {
+        setSaveState(producers);
+    }, [producers, setSaveState]);
+
+    const loadFromSaveState = useCallback(() => {
+        const saveState = getSaveState();
+
+        if (saveState) {
+            setProducers(saveState);
+        }
+    }, [producers, getSaveState]);
+
+    return [ producers, addProducer, sumClicks, createSaveState, loadFromSaveState];
 };

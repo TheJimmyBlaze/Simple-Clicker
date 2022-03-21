@@ -6,7 +6,7 @@ const ProducerCounter = memo(({
 
     return(
         <label>
-            <i class={`bi ${producer.icon}`}></i> {`${producer.displayName}: ${producer.count}`}
+            <i className={`bi ${producer.icon}`}></i> {`${producer.displayName}: ${producer.count}`}
         </label>
     );
 });

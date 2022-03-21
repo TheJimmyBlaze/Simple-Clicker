@@ -8,8 +8,21 @@ const refreshPerSecond = 10;
 
 const App = () => {
  
-    const [lastSnapshot, clicks, addClicks, spendClicks, makeSnapshot] = useClicks();
-    const [producers, addProducer, sumClicks] = useProducer();
+    const [lastSnapshot, clicks, addClicks, spendClicks, makeSnapshot, saveClicks, loadClicks] = useClicks();
+    const [producers, addProducer, sumClicks, saveProducers, loadProducers] = useProducer();
+
+    useEffect(() => {
+        loadClicks();
+        loadProducers();
+    }, [])
+
+    useEffect(() => {
+        saveClicks();
+    }, [saveClicks])
+
+    useEffect(() => {
+        saveProducers();
+    }, [saveProducers])
 
     useEffect(() => {
         const refreshInterval = setInterval(() => {
@@ -17,7 +30,7 @@ const App = () => {
         }, 1000 / refreshPerSecond);
 
         return () => clearInterval(refreshInterval);
-    }, [clicks, lastSnapshot, refreshPerSecond]);
+    }, [refreshPerSecond, clicks, lastSnapshot]);
  
     return (
         <div className="d-flex vw-100 vh-100 bg-dark text-muted align-items-center justify-content-center">

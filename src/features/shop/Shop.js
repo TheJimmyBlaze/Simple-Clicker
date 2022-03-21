@@ -10,7 +10,7 @@ const Shop = memo(({
 
     return(
         <section className="mx-4"
-            style={{width: '256px'}}>
+            style={{width: '350px'}}>
             {
                 producers.map(producer => (
                     <ShopCard key={producer.name}
