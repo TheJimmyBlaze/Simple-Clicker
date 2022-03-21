@@ -5,9 +5,7 @@ const ClickCounter = memo(({
 }) => {
 
     return (
-        <h4 className="text-muted mt-4">
-            { clicks }
-        </h4>
+        <h4>{clicks}</h4>
     );
 });
 

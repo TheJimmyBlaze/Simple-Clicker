@@ -1,5 +1,25 @@
 import { useState, useCallback } from 'react';
 
+const priceMultiplier = 0.05;
+
+const createProducer = (name, displayName, icon, clicksPerSecond, basePrice) => {
+
+    return {
+        name,
+        displayName,
+        icon,
+        clicksPerSecond,
+        count: 0,
+        basePrice,
+        price: basePrice
+    };
+}
+
+const calculateProducerCost = (count, basePrice) => {
+    const exponent = 1 + count * priceMultiplier;
+    return Math.floor(Math.pow(basePrice, exponent));
+};
+
 const sumProducerClicks = (lastSnapshot, clicksPerSecond, count) => {
     let snapshotDelta = new Date(Date.now() - lastSnapshot).valueOf();
     let clickDelta = 1000 / clicksPerSecond;
@@ -10,14 +30,22 @@ const sumProducerClicks = (lastSnapshot, clicksPerSecond, count) => {
 export const useProducer = () => {
 
     const [ producers, setProducers ] = useState([
-        { name: 'autoClicker', clicksPerSecond: 0.5, count: 0  }
+        createProducer('autoClicker', 'Auto Clicker', 'bi-cursor', 0.5, 100),
+        createProducer('mouse', 'Mouse', 'bi-mouse', 5, 1000)
     ]);
 
     const addProducer = useCallback(name => {
         
         setProducers(producers.map(producer => {
-            if (producer.name === name)
-                producer.count++;
+
+            if (producer.name === name) {
+                let newProducer = {...producer};
+                newProducer.count ++;
+                newProducer.price = calculateProducerCost(newProducer.count, producer.basePrice);
+                return newProducer;
+            }
+
+            return producer;
         }));
     }, [producers, setProducers]);
 
